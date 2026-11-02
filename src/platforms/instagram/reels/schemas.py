@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class Reel(BaseModel):
-    media_code: str                  # code
+    media_code: str                 # code
     media_id: str                   # pk
     taken_at: datetime              # taken_at
     author_id: str                  # user.pk
