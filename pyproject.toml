@@ -1,0 +1,15 @@
+[project]
+name = "instagram-scraper"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "google-api-python-client>=2.201.0",
+    "gspread>=6.2.1",
+    "nstbrowser>=0.0.3",
+    "playwright>=1.64.1",
+    "pydantic>=2.14.2",
+    "pydantic-settings>=2.16.2",
+    "requests>=2.34.2",
+]
