@@ -1,7 +1,7 @@
 from google.oauth2.service_account import Credentials
 from google.oauth2.sts import Client
 
-from src.integration.google.settings import get_google_settings
+from src.platforms.instagram.settings import get_google_settings
 
 settings = get_google_settings()
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
