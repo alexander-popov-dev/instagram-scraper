@@ -1,12 +1,12 @@
 import logging
 from urllib.parse import urlparse
 
-from playwright.sync_api import (
+from playwright.async_api import (
     Browser,
     BrowserContext,
     Page,
     Playwright,
-    sync_playwright,
+    async_playwright,
 )
 
 from src.core.clients.base import BaseBrowserClient
@@ -15,10 +15,11 @@ from src.settings import get_settings
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
+
 class PlaywrightClient(BaseBrowserClient):
     def __init__(
-        self,
-        proxy: str | dict | None = None,
+            self,
+            proxy: str | dict | None = None,
     ) -> None:
         self._proxy = proxy
         self._playwright: Playwright | None = None
@@ -46,27 +47,29 @@ class PlaywrightClient(BaseBrowserClient):
 
         return proxy
 
-    def start(self, cdp_endpoint_url: str | None = None) -> None:
-        self._playwright = sync_playwright().start()
+    async def start(self, cdp_endpoint_url: str | None = None) -> None:
+        self._playwright = await async_playwright().start()
 
         if cdp_endpoint_url:
-            self._browser = self._playwright.chromium.connect_over_cdp(endpoint_url=cdp_endpoint_url)
+            self._browser = await self._playwright.chromium.connect_over_cdp(endpoint_url=cdp_endpoint_url)
             self._context = self._browser.contexts[0]
             self._page = self._context.pages[0]
             logger.info("Playwright over CDP successfully started")
 
         else:
-            self._browser = self._playwright.chromium.launch(headless=settings.headless)
-
-            self._context = self._browser.new_context()
-            self._page = self._context.new_page()
+            self._browser = await self._playwright.chromium.launch(headless=settings.headless)
+            self._context = await self._browser.new_context()
+            self._page = await self._context.new_page()
             logger.info("Playwright successfully started")
 
-    def close(self) -> None:
+    async def close(self) -> None:
         if self._playwright:
-            self._playwright.stop()
+            await self._playwright.stop()
 
         logger.info("Playwright successfully stopped")
 
-    def get_page(self) -> Page:
+    async def get_page(self) -> Page:
+        if not self._page:
+            raise RuntimeError("Playwright not started yet")
+
         return self._page
