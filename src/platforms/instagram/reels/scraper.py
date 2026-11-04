@@ -2,13 +2,12 @@ import random
 
 from playwright.async_api import Page, async_playwright, Response
 
-from src.providers.nst import NstBrowserProvider
+from src.core.clients.browser.playwright.client import PlaywrightClient
 
 
-class ReelsScraper:
+class ReelsScraper(PlaywrightClient):
     def __init__(self) -> None:
-        self._page: Page | None = None
-        self._provider: NstBrowserProvider = NstBrowserProvider()
+        super().__init__()
         self._raw_data: list[dict] | None = None
 
     async def _on_response(self, response: Response):
@@ -28,7 +27,6 @@ class ReelsScraper:
             await self._page.mouse.move(vp["width"] / 2, vp["height"] / 2)
 
     async def scrape(self):
-        async with async_playwright() as playwright:
             browser = await playwright.chromium.connect_over_cdp(endpoint_url=self._provider.get_local_endpoint_url())
             context = browser.contexts[0]
             self._page = context.pages[0]
