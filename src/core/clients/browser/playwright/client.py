@@ -20,8 +20,10 @@ class PlaywrightClient(BaseBrowserClient):
     def __init__(
             self,
             proxy: str | dict | None = None,
+            cdp_endpoint_url: str | None = None
     ) -> None:
         self._proxy = proxy
+        self._cdp_endpoint_url = cdp_endpoint_url
         self._playwright: Playwright | None = None
         self._context: BrowserContext | None = None
         self._browser: Browser | None = None
@@ -47,18 +49,18 @@ class PlaywrightClient(BaseBrowserClient):
 
         return proxy
 
-    async def start(self, cdp_endpoint_url: str | None = None) -> None:
+    async def start(self) -> None:
         self._playwright = await async_playwright().start()
 
-        if cdp_endpoint_url:
-            self._browser = await self._playwright.chromium.connect_over_cdp(endpoint_url=cdp_endpoint_url)
+        if self._cdp_endpoint_url:
+            self._browser = await self._playwright.chromium.connect_over_cdp(endpoint_url=self._cdp_endpoint_url)
             self._context = self._browser.contexts[0]
             self._page = self._context.pages[0]
             logger.info("Playwright over CDP successfully started")
 
         else:
-            self._browser = await self._playwright.chromium.launch(headless=settings.headless)
-            self._context = await self._browser.new_context()
+            self._browser = await self._playwright.chromium.launch(headless=False)
+            self._context = await self._browser.new_context(proxy=self._get_proxy())
             self._page = await self._context.new_page()
             logger.info("Playwright successfully started")
 
