@@ -22,6 +22,8 @@ class ReelsProjectSettings(BaseProjectSettings):
 
     # Reels criteria
     min_reports_count: int
+    min_likes_count: int
+    min_comments_count: int
     max_reel_age_days: int
     max_days_to_keep_reels: int
 
@@ -34,7 +36,7 @@ class ReelsProjectSettings(BaseProjectSettings):
         return random.randint(self.min_pause_interval_minutes, self.max_pause_interval_minutes)
 
     @property
-    def get_service_account(self):
+    def service_account(self):
         return Credentials.from_service_account_file(
             filename=str(self.service_account_creds_path),
             scopes=self.scopes

@@ -10,6 +10,17 @@ class BaseProjectSettings(BaseSettings):
         extra="ignore"
     )
 
+    debug: bool = False
+    headless: bool = False if debug else True
+
+    # Telegram
+    telegram_bot_token: str = ""
+    telegram_chat_id: str = ""
+    telegram_thread_id: str = ""
+
+    if debug:
+        headless = False
+
 
 @cache
 def get_settings() -> BaseProjectSettings:
